@@ -1,4 +1,4 @@
-## Project Inventory Management - Medication Register
+## Medication Register
 
 npm install express mariadb dotenv
 
