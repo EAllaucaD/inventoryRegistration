@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Inventory Register Service
+  description: API for registering new medicines into the inventory.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:3010/api/inventory'
+    description: Local server
+
+paths:
+  /register:
+    post:
+      summary: Register new inventory item
+      operationId: registerInventory
+      requestBody:
+        description: Medicine to be registered in the inventory
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - MedicamentName
+                - Type
+                - Quantity
+                - ElaborationDate
+                - ExpirationDate
+                - Status
+              properties:
+                MedicamentName:
+                  type: string
+                Type:
+                  type: string
+                Quantity:
+                  type: integer
+                ElaborationDate:
+                  type: string
+                  format: date
+                ExpirationDate:
+                  type: string
+                  format: date
+                Status:
+                  type: string
+      responses:
+        '201':
+          description: Successfully registered inventory item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id:
+                    type: integer
+        '400':
+          description: Missing required fields in the request body
+        '500':
+          description: Error on the server
