@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+
     - name: Manage Swagger Documentation
       run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]] || [[ "${{ github.event.pull_request.base.ref }}" == "QA" ]]; then
@@ -25,6 +26,7 @@ jobs:
             rm -f ./src/docs/swagger.yaml
           fi
           
+
     - name: Login Dockerhub
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
