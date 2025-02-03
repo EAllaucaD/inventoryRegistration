@@ -1,0 +1,76 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]  # Debe coincidir exactamente con el nombre del CI Pipeline
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Solo si el CI fue exitoso
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Determinar entorno y etiqueta de la imagen
+      id: vars
+      run: |
+        if [[ "${{ github.event.workflow_run.head_branch }}" == "dev" ]]; then
+          echo "TAG=dev" >> $GITHUB_ENV
+        elif [[ "${{ github.event.workflow_run.head_branch }}" == "QA" ]]; then
+          echo "TAG=qa" >> $GITHUB_ENV
+        elif [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
+          echo "TAG=prod" >> $GITHUB_ENV
+        else
+          echo "❌ Rama no soportada para despliegue."
+          exit 1
+        fi
+
+    - name: Despliegue en EC2
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          echo "✅ Conexión SSH establecida."
+
+          # Verificar e instalar Docker si no está presente
+          if ! command -v docker &> /dev/null; then
+            echo "🔧 Instalando Docker..."
+            sudo apt update
+            sudo apt install -y docker.io
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            sudo usermod -aG docker $USER
+            newgrp docker
+          else
+            echo "🐳 Docker ya está instalado."
+          fi
+
+          # Asegurar que Docker esté activo
+          if ! sudo systemctl is-active --quiet docker; then
+            echo "🚀 Iniciando Docker..."
+            sudo systemctl start docker
+          fi
+
+          # Pull de la nueva imagen
+          echo "📦 Realizando pull de la imagen..."
+          if ! docker pull ${{ secrets.DOCKER_USERNAME }}/inventoryregistration:${{ env.TAG }}; then
+            echo "❌ Error al hacer pull de la imagen."
+            exit 1
+          fi
+
+          # Detener y eliminar contenedor existente
+          echo "🛑 Deteniendo contenedor existente si está en ejecución..."
+          docker stop inventoryregistration-container || true
+          docker rm -f inventoryregistration-container || true
+
+          # Desplegar nuevo contenedor
+          echo "🚀 Iniciando nuevo contenedor..."
+          if ! docker run -d -p 3010:3010 --name inventoryregistration-container ${{ secrets.DOCKER_USERNAME }}/inventoryregistration:${{ env.TAG }}; then
+            echo "❌ Error al iniciar el nuevo contenedor."
+            exit 1
+          fi
+
+          echo "✅ Despliegue completado exitosamente."
