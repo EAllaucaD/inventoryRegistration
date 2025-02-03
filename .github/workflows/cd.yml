@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Debug GitHub Event
+      run: |
+        echo "Evento recibido:"
+        echo "${{ toJson(github.event) }}"
+
     - name: Determinar entorno y etiqueta de la imagen
       id: vars
       run: |
