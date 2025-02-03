@@ -1,8 +1,8 @@
-name: CD 
+name: CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["CI"]  # Debe coincidir exactamente con el nombre del CI Pipeline
+    workflows: ["CI Pipeline"]  # Verifica que el nombre sea exacto
     types:
       - completed
 
@@ -14,7 +14,12 @@ jobs:
     steps:
     - name: Debug GitHub Event
       run: |
-        echo "Evento recibido:"
+        echo "Evento recibido en CD:"
+        echo "${{ toJson(github.event) }}"
+
+    - name: Verificar eventos de workflow_run
+      run: |
+        echo "Verificando eventos workflow_run"
         echo "${{ toJson(github.event) }}"
 
     - name: Determinar entorno y etiqueta de la imagen
@@ -39,7 +44,6 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         script: |
           echo "Conexión SSH establecida."
-
           # Verificar e instalar Docker si no está presente
           if ! command -v docker &> /dev/null; then
             echo "🔧 Instalando Docker..."
