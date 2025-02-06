@@ -56,7 +56,9 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.base.ref == 'QA' || github.event.pull_request.base.ref == 'main' }}
+    if: |
+      github.event_name == 'push' && github.ref == 'refs/heads/dev' ||
+      github.event_name == 'pull_request' && (github.event.pull_request.base.ref == 'QA' || github.event.pull_request.base.ref == 'main')
 
     steps:
     - name: Deploy to EC2
@@ -79,7 +81,9 @@ jobs:
             echo "Docker is already installed."
           fi
 
-          if [[ "${{ github.event.pull_request.base.ref }}" == "QA" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            TAG="dev"
+          elif [[ "${{ github.event.pull_request.base.ref }}" == "QA" ]]; then
             TAG="qa"
           elif [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then
             TAG="prod"
