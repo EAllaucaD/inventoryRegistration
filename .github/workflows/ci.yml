@@ -18,10 +18,10 @@ jobs:
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/dev" ]] || [[ "${{ github.event.pull_request.base.ref }}" == "QA" ]]; then
           echo "Including swagger.yaml for dev or QA."
-          cp ./src/Docs/swagger.yaml ./swagger.yaml
+          cp ./src/docs/swagger.yaml ./swagger.yaml
         elif [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then
           echo "Excluding swagger.yaml for production."
-          rm -f ./src/Docs/swagger.yaml
+          rm -f ./src/docs/swagger.yaml
         fi
 
     - name: Login to Docker Hub
@@ -99,7 +99,7 @@ jobs:
 
           # Run the new container
           echo "Running new container..."
-          sudo docker run -d -p 3001:3001 --restart unless-stopped --name inventoryregistration-container \
+          sudo docker run -d -p 3010:3010 --restart unless-stopped --name inventoryregistration-container \
             -e HOST_DB=${{ secrets.HOST_DB }} \
             -e USER_DB=${{ secrets.USER_DB }} \
             -e PASSWORD_DB=${{ secrets.PASSWORD_DB }} \
