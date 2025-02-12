@@ -20,11 +20,11 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // Routes of inventary
 app.use('/api/inventory', inventoryRoutes);
 
-const PORT = process.env.PORT || 3010;
+const port = process.env.PORT || 3010;
 
-app.listen(PORT, () => {
-  console.log(`Inventory Update service running on port ${PORT}`);
-  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+app.listen(port, () => {
+  console.log(`Inventory Update service running on port ${port}`);
+  console.log(`Swagger docs available at http://localhost:${port}/api-docs`);
 });
 
 
