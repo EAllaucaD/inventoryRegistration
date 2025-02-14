@@ -1,5 +1,17 @@
 # **Microservice for Create Medicine**
 
+## **🚨Attention! 🚨**
+
+This is an important message related to the project. Please read it carefully before proceeding.
+
+- **dev Branch:** This branch is where the general development and work of this repository takes place.
+
+- **QA Branch:** In this branch you will see the project approved from the development branch to QA.
+
+- **Main Branch:** This branch contains the final functionalities of the repository.
+
+---
+
 ## 📋 Table of Contents
 
 1. [📖 About the Project](#-about-the-project)
@@ -17,7 +29,7 @@ This microservice is responsible for performing the Create CRUD to add new infor
 ### 🏗️ Features:
 
 - **CI/CD Automation**: Automatic updates on every push and pull request.
-
+- **Secure Deployment**: Uses SSH keys for server access
 ---
 
 ## 🛠️ Tools Used
@@ -32,16 +44,26 @@ This microservice is responsible for performing the Create CRUD to add new infor
 
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 
+![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+
 ---
 
 ## 📋 Prerequisites
 
 Before you begin, make sure you have:
+1. **AWS Account** with a configured EC2 instance.
+2. **SSH Keys** generated for secure connection.
 
- - Have the credentials to access the **Docker Hub.**
+    EC2_KEY: Content of your private SSH key.
 
- - Create a .env file in the root of the project that has DB_HOST,
-DB_USER, DB_PASSWORD, DB_NAME, DB_PORT for the connection to your MariaDb database.
+    EC2_HOST: Public IP address of your EC2 instance.
+
+    You can get them from your AWS account.
+3. **Secrets configured** in your GitHub repository.
+4. **DockerHub** credential.
+5. **Maria DB** create in AWS RDS.
+6. Create a .env file in each microservice for this project that has HOST_DB,USER_DB, PASSWORD_DB, DATABASE_NAME, 
+JWT_SECRET,PORT.
 
 ---
 
@@ -55,7 +77,7 @@ git clone https://github.com/EAllaucaD/inventoryRegistration.git
 #### To test the microservice locally:
 
 ```bash
-npm install express body-parser cors pg dotenv mariadb swagger-ui-express yaml
+npm install
 ```
 You can then run the application using the following command.
 
@@ -67,4 +89,30 @@ Once you run the detailed commands you can see how the service is started on the
 
 Server run in http://localhost:3010
 
+### To test the microservice in AWS:
+
+a. Configure the appropriate secrets with the instances and databases raised.
+
+b. You can us this microservice in this ip : http://52.1.182.64:{PORT}/api/inventory/register
+
+
+And you can use /api-docs for view the configurations of swagger only in branch dev and QA.
+
+http://52.1.182.64:3012/api-docs
+
+
 ## 🎨 Preview
+
+Microservices pushed to Docker Hub.
+![image](https://github.com/user-attachments/assets/c96ee03b-711f-45b1-923a-b594c8c61935)
+
+Pull the image microservice to the EC2.
+
+![image](https://github.com/user-attachments/assets/bd78161c-219a-45ac-906f-f2693ab7bb63)
+
+Swagger
+![image](https://github.com/user-attachments/assets/4c315a06-991e-47ef-806f-0af1dd7f6b24)
+
+Microservices consumed by a front end.
+
+![image](https://github.com/user-attachments/assets/20c0d193-bc49-42b1-a64d-32fa52be7a95)
